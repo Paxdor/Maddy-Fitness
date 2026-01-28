@@ -698,6 +698,163 @@
             color: var(--dark);
         }
 
+        /* Booking Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Righteous', cursive;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .modal-details {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .modal-details p {
+            margin: 8px 0;
+            font-weight: 600;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-form label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .modal-form input {
+            padding: 15px 20px;
+            border: 3px solid var(--accent);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .modal-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255,107,157,0.1);
+        }
+
+        .modal-submit {
+            margin-top: 10px;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), #FF8FA3);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+        }
+
+        .modal-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
         /* Footer */
         .footer {
             text-align: center;
@@ -973,6 +1130,50 @@
         </div>
     </section>
 
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            
+            <div id="bookingForm">
+                <div class="modal-header">
+                    <h3>Complete Your Booking 💕</h3>
+                    <p>Just need a few details to confirm!</p>
+                </div>
+
+                <div class="modal-details" id="bookingDetails"></div>
+
+                <form class="modal-form" id="contactForm">
+                    <div>
+                        <label for="bookingName">Your Name *</label>
+                        <input type="text" id="bookingName" name="name" required placeholder="First and Last Name">
+                    </div>
+                    
+                    <div>
+                        <label for="bookingEmail">Email Address *</label>
+                        <input type="email" id="bookingEmail" name="email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div>
+                        <label for="bookingPhone">Phone Number *</label>
+                        <input type="tel" id="bookingPhone" name="phone" required placeholder="(555) 123-4567">
+                    </div>
+
+                    <button type="submit" class="modal-submit" id="submitBooking">
+                        Confirm Booking ✨
+                    </button>
+                </form>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">✅</div>
+                <h3 style="color: var(--primary); font-family: 'Righteous', cursive; margin-bottom: 15px;">Booking Confirmed!</h3>
+                <p style="font-size: 1.1rem; margin-bottom: 10px;">I'll text you shortly to confirm your session! 💕</p>
+                <button class="modal-submit" onclick="closeBookingModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <p>Made with <span class="footer-heart">♥</span> for Maddy Monte Fitness</p>
@@ -1084,21 +1285,187 @@
         bookBtn.addEventListener('click', function(e) {
             e.preventDefault();
             if (selectedSlot && selectedWorkoutType && selectedDay) {
-                const workoutName = {
-                    'mat-pilates': 'Mat Pilates',
-                    'strength': 'Strength Training',
-                    'sculpt': 'Body Sculpt'
-                }[selectedWorkoutType];
-                const dayName = {
-                    'monday': 'Monday',
-                    'tuesday': 'Tuesday',
-                    'wednesday': 'Wednesday',
-                    'thursday': 'Thursday',
-                    'friday': 'Friday'
-                }[selectedDay];
-                alert(`Great! You've selected ${workoutName} on ${dayName} at ${selectedSlot}. We'll reach out to confirm your booking! 💕`);
+                // Show booking modal
+                showBookingModal();
             }
         });
+
+        // Booking Modal Functions
+        function showBookingModal() {
+            const workoutName = {
+                'mat-pilates': 'Mat Pilates',
+                'strength': 'Strength Training',
+                'sculpt': 'Body Sculpt'
+            }[selectedWorkoutType];
+            
+            const dayName = {
+                'monday': 'Monday',
+                'tuesday': 'Tuesday',
+                'wednesday': 'Wednesday',
+                'thursday': 'Thursday',
+                'friday': 'Friday'
+            }[selectedDay];
+
+            // Update modal details
+            document.getElementById('bookingDetails').innerHTML = `
+                <p><strong>Workout:</strong> ${workoutName}</p>
+                <p><strong>Day:</strong> ${dayName}</p>
+                <p><strong>Time:</strong> ${selectedSlot}</p>
+            `;
+
+            document.getElementById('bookingModal').classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('show');
+            document.body.style.overflow = ''; // Restore scroll
+            
+            // Reset form
+            document.getElementById('contactForm').reset();
+            document.getElementById('bookingForm').style.display = 'block';
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        document.getElementById('closeModal').addEventListener('click', closeBookingModal);
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBookingModal();
+            }
+        });
+
+        // Handle booking form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBooking');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Booking...';
+
+            const workoutName = {
+                'mat-pilates': 'Mat Pilates',
+                'strength': 'Strength Training',
+                'sculpt': 'Body Sculpt'
+            }[selectedWorkoutType];
+            
+            const dayName = {
+                'monday': 'Monday',
+                'tuesday': 'Tuesday',
+                'wednesday': 'Wednesday',
+                'thursday': 'Thursday',
+                'friday': 'Friday'
+            }[selectedDay];
+
+            const bookingData = {
+                name: document.getElementById('bookingName').value,
+                email: document.getElementById('bookingEmail').value,
+                phone: document.getElementById('bookingPhone').value,
+                workout: workoutName,
+                day: dayName,
+                timeSlot: selectedSlot
+            };
+
+            try {
+                // Send to serverless function
+                const response = await fetch('/api/book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (response.ok) {
+                    // Remove the booked time slot
+                    removeTimeSlot(selectedDay, selectedSlot);
+                    
+                    // Show success message
+                    document.getElementById('bookingForm').style.display = 'none';
+                    document.getElementById('successMessage').classList.add('show');
+                    
+                    // Reset selections
+                    selectedWorkoutType = null;
+                    selectedDay = null;
+                    selectedSlot = null;
+                    
+                    // Clear UI selections
+                    document.querySelectorAll('.workout-type').forEach(t => t.classList.remove('selected'));
+                    document.querySelectorAll('.weekday').forEach(d => d.classList.remove('selected'));
+                    timeSlotsContainer.classList.add('hidden');
+                    selectDayMessage.style.display = 'block';
+                    bookBtn.disabled = true;
+                    bookBtn.textContent = 'Select a Workout Type';
+                } else {
+                    throw new Error('Booking failed');
+                }
+            } catch (error) {
+                alert('There was an error processing your booking. Please try texting (508) 378-8888 directly to book.');
+                console.error('Booking error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking ✨';
+            }
+        });
+
+        // Store and manage booked slots
+        function getBookedSlots() {
+            const stored = localStorage.getItem('bookedSlots');
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveBookedSlots(bookedSlots) {
+            localStorage.setItem('bookedSlots', JSON.stringify(bookedSlots));
+        }
+
+        function removeTimeSlot(day, timeSlot) {
+            // Get booked slots from storage
+            const bookedSlots = getBookedSlots();
+            
+            // Add this slot to booked list
+            if (!bookedSlots[day]) {
+                bookedSlots[day] = [];
+            }
+            bookedSlots[day].push(timeSlot);
+            
+            // Save to storage
+            saveBookedSlots(bookedSlots);
+            
+            // Remove from UI
+            const timeSlotElements = document.querySelectorAll('.time-slot');
+            timeSlotElements.forEach(slot => {
+                if (slot.textContent === timeSlot) {
+                    slot.remove();
+                }
+            });
+        }
+
+        // Check for booked slots on page load and hide them
+        function hideBookedSlots() {
+            const bookedSlots = getBookedSlots();
+            
+            weekdays.forEach(dayElement => {
+                const day = dayElement.dataset.day;
+                
+                dayElement.addEventListener('click', function() {
+                    // After day is selected, hide any booked slots for that day
+                    setTimeout(() => {
+                        if (bookedSlots[day]) {
+                            const timeSlotElements = document.querySelectorAll('.time-slot');
+                            timeSlotElements.forEach(slot => {
+                                if (bookedSlots[day].includes(slot.textContent)) {
+                                    slot.style.display = 'none';
+                                }
+                            });
+                        }
+                    }, 100);
+                });
+            });
+        }
+
+        // Initialize booked slots hiding
+        hideBookedSlots();
 
         // Tab functionality
         const tabBtns = document.querySelectorAll('.tab-btn');
